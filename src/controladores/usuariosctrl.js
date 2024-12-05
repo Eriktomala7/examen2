@@ -29,3 +29,12 @@ export const registrarUsuario = async (req, res) => {
         res.status(500).json({ message: 'Error al registrar el usuario' });
     }
 };
+ //agregame para ver los usuarios
+ export const obtenerUsuarios = async (req, res) => {
+    try {
+        const [result] = await conmysql.query('SELECT * FROM usuario');
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener los usuarios' });
+    }
+};
