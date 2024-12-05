@@ -1,10 +1,16 @@
 import express from "express";
+import cors from "cors";
 import clientes_routes from "./routes/clientes_routes.js";
 import partido_routes from "./routes/partido_routes.js";
 import pronostico_routes from "./routes/pronostico_routes.js";
 import usuarios_routes from "./routes/usuarios_routes.js";
 
 const app = express();
+
+// Middleware para habilitar CORS (permitir solicitudes desde otros orígenes)
+app.use(cors({
+    origin: 'http://localhost:8100' // Solo permite solicitudes de este origen
+}));
 
 // Middleware para parsear JSON
 app.use(express.json());
