@@ -3,16 +3,31 @@ import bcrypt from "bcrypt";
 
 export const loginUsuario = async (req, res) => {
     const { usuario, clave } = req.body;
+    
+    // Validar que los datos de entrada sean correctos
+    if (!usuario || !clave) {
+        return res.status(400).json({ message: 'Usuario y clave son requeridos' });
+    }
+
     try {
         const [result] = await conmysql.query('SELECT * FROM usuario WHERE usuario = ?', [usuario]);
-        if (result.length === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
+        
+        // Verificar si el usuario existe
+        if (result.length === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
 
+        // Comparar la contraseña ingresada con la almacenada
         const validPassword = await bcrypt.compare(clave, result[0].clave);
-        if (!validPassword) return res.status(401).json({ message: 'Contraseña incorrecta' });
+        if (!validPassword) {
+            return res.status(401).json({ message: 'Contraseña incorrecta' });
+        }
 
+        // Responder con éxito si todo es válido
         res.json({ message: 'Inicio de sesión exitoso', usuario: result[0] });
     } catch (error) {
-        res.status(500).json({ message: 'Error al iniciar sesión' });
+        console.error('Error:', error);  // Agregar para depurar el error
+        res.status(500).json({ message: 'Error al iniciar sesión', error: error.message });
     }
 };
 
